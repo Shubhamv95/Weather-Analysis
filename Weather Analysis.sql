@@ -1,0 +1,68 @@
+CREATE TABLE Station 
+ 
+( 
+ID Number, 
+CITY CHAR(20), 
+STATE CHAR(2), 
+LAT_N Number, 
+LONG_W Number 
+)
+
+INSERT INTO Station VALUES(66, 'CARIBOU', 'ME', 47, 68)
+INSERT INTO Station VALUES(44, 'DENVER', 'CO', 40, 105)
+INSERT INTO Station VALUES(13, 'PHOENIX', 'AZ', 33, 112)
+
+Select * FROM Station
+
+Select * FROM Station 
+Where LAT_N>39.7
+
+CREATE TABLE STATS  
+(  
+ID Number,  
+Month Number CHECK (Month Between 1 AND 12), 
+TEMP_F Number CHECK (TEMP_F BETWEEN -80 AND 150), 
+RAIN_I Number CHECK (RAIN_I BETWEEN 0 AND 100), 
+UNIQUE (ID, Month) 
+)
+
+INSERT INTO STATS Values(13, 1, 57.4, 0.31)  
+INSERT INTO STATS Values(13, 7, 91.7, 5.15)  
+INSERT INTO STATS Values(44, 1, 27.3, .18)  
+INSERT INTO STATS Values(44, 7, 74.8, 2.11)  
+INSERT INTO STATS Values(66, 1, 6.7, 2.1) 
+INSERT INTO STATS Values(66, 7, 65.8, 4.52)
+
+SELECT STATS.ID, STATS.TEMP_F, Station.City 
+From STATS 
+INNER JOIN Station 
+ON Station.ID = STATS.ID
+
+SELECT STATS.ID, STATS.Month, Station.City, STATS.RAIN_I 
+From STATS 
+INNER JOIN Station 
+ON Station.ID = STATS.ID 
+ORDER BY RAIN_I DESC, Month
+
+
+SELECT STATS.TEMP_F, STATS.Month, Station.City, Station.LAT_N 
+From STATS 
+INNER JOIN Station 
+ON Station.ID = STATS.ID 
+WHERE Month=7 
+ORDER BY TEMP_F
+
+SELECT MAX(STATS.TEMP_F), MIN(STATS.TEMP_F), Station.City, AVG(RAIN_I) 
+From STATS 
+INNER JOIN Station 
+ON Station.ID = STATS.ID 
+GROUP BY Station.City
+
+SELECT STATS.Month, Round((STATS.TEMP_F-32)*5/9,4) AS TEMP_C, STATS.RAIN_I*2.54 AS RAIN_C, Station.City 
+From STATS 
+INNER JOIN Station 
+ON Station.ID = STATS.ID
+
+UPDATE STATS SET RAIN_I = RAIN_I + 0.01
+
+UPDATE STATS SET TEMP_F = 74.9 WHERE ID = 44 AND Month = 7
